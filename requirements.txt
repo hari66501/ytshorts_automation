@@ -1,7 +1,12 @@
 openai==1.3.8
-moviepy==2.2.1
+moviepy==2.0.0.dev2
 imageio==2.37.0
 imageio-ffmpeg==0.6.0
 Pillow==10.4.0
 requests==2.31.0
-youtube-upload==0.8.0
+tqdm==4.66.3
+decorator==5.1.1
+numpy==1.26.4
+
+# Install youtube-upload from GitHub source
+git+https://github.com/tokland/youtube-upload.git
