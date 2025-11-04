@@ -18,18 +18,22 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install and fix ImageMagick policy
+      - name: Install and fix ImageMagick
         run: |
           sudo apt-get update
-          sudo apt-get install -y imagemagick
-          sudo sed -i 's/rights="none" pattern="PDF"/rights="read|write" pattern="PDF"/' /etc/ImageMagick-6/policy.xml
-          sudo sed -i 's/rights="none" pattern="PS"/rights="read|write" pattern="PS"/' /etc/ImageMagick-6/policy.xml
-          sudo sed -i 's/rights="none" pattern="EPI"/rights="read|write" pattern="EPI"/' /etc/ImageMagick-6/policy.xml
-          sudo sed -i 's/rights="none" pattern="XPS"/rights="read|write" pattern="XPS"/' /etc/ImageMagick-6/policy.xml
-          sudo sed -i 's/rights="none" pattern="TEXT"/rights="read|write" pattern="TEXT"/' /etc/ImageMagick-6/policy.xml
-          sudo sed -i 's/rights="none" pattern="LABEL"/rights="read|write" pattern="LABEL"/' /etc/ImageMagick-6/policy.xml
+          sudo apt-get install -y imagemagick fonts-dejavu-core
+          echo "🧩 Checking convert path..."
           which convert
           convert --version
+          echo "⚙️ Fixing ImageMagick security policy..."
+          sudo sed -i 's/rights="none" pattern="PDF"/rights="read|write" pattern="PDF"/' /etc/ImageMagick-6/policy.xml || true
+          sudo sed -i 's/rights="none" pattern="PS"/rights="read|write" pattern="PS"/' /etc/ImageMagick-6/policy.xml || true
+          sudo sed -i 's/rights="none" pattern="EPI"/rights="read|write" pattern="EPI"/' /etc/ImageMagick-6/policy.xml || true
+          sudo sed -i 's/rights="none" pattern="XPS"/rights="read|write" pattern="XPS"/' /etc/ImageMagick-6/policy.xml || true
+          sudo sed -i 's/rights="none" pattern="TEXT"/rights="read|write" pattern="TEXT"/' /etc/ImageMagick-6/policy.xml || true
+          sudo sed -i 's/rights="none" pattern="LABEL"/rights="read|write" pattern="LABEL"/' /etc/ImageMagick-6/policy.xml || true
+          echo "export IMAGE_MAGICK_BINARY=$(which convert)" >> $GITHUB_ENV
+          echo "✅ ImageMagick installed and policy unlocked."
 
       - name: Install Python dependencies
         run: |
