@@ -1,0 +1,48 @@
+services:
+  - type: cron
+    name: generate_riddles_daily
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python daily_riddle_generator.py
+    schedule: "5 5 * * *" # Every day at 5:05 AM IST
+
+  - type: cron
+    name: upload_video_1
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python auto_upload.py
+    schedule: "0 6 * * *" # 6:00 AM IST
+
+  - type: cron
+    name: upload_video_2
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python auto_upload.py
+    schedule: "0 9 * * *" # 9:00 AM IST
+
+  - type: cron
+    name: upload_video_3
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python auto_upload.py
+    schedule: "0 12 * * *" # 12:00 PM IST
+
+  - type: cron
+    name: upload_video_4
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python auto_upload.py
+    schedule: "0 15 * * *" # 3:00 PM IST
+
+  - type: cron
+    name: upload_video_5
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python auto_upload.py
+    schedule: "0 18 * * *" # 6:00 PM IST
