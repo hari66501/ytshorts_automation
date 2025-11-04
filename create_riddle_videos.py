@@ -4,6 +4,10 @@ from datetime import datetime
 from PIL import Image
 import os
 
+# ✅ Patch for Pillow 10+ (fixes "no attribute ANTIALIAS" error)
+if not hasattr(Image, "ANTIALIAS"):
+    Image.ANTIALIAS = Image.Resampling.LANCZOS
+
 # 🗓 Automatically match today's riddle file name
 today_date = datetime.now().strftime("%Y-%m-%d")
 input_file = f"today_riddles_{today_date}.txt"
