@@ -1,17 +1,12 @@
-from moviepy.editor import *
-from moviepy.audio.fx import all as afx
-from datetime import datetime
-from PIL import Image
-import os
-
+# ✅ Pillow compatibility patch for ANTIALIAS (Pillow 10+)
 from PIL import Image
 if not hasattr(Image, 'ANTIALIAS'):
     Image.ANTIALIAS = Image.Resampling.LANCZOS
 
-
-# ✅ Patch for Pillow 10+ (fixes "no attribute ANTIALIAS" error)
-if not hasattr(Image, "ANTIALIAS"):
-    Image.ANTIALIAS = Image.Resampling.LANCZOS
+from moviepy.editor import *
+from moviepy.audio.fx import all as afx
+from datetime import datetime
+import os
 
 # 🗓 Automatically match today's riddle file name
 today_date = datetime.now().strftime("%Y-%m-%d")
@@ -78,16 +73,14 @@ for i, line in enumerate(lines, 1):
         # 🎬 Fade out video smoothly at the end
         final = final.crossfadeout(1.2)
 
-        # 📤 Export final video
+        # 📤 Export final video (✅ removed deprecated verbose/logger args)
         output_path = os.path.join(output_dir, f"riddle_{i}.mp4")
         final.write_videofile(
             output_path,
             fps=24,
             codec='libx264',
             audio_codec='aac',
-            threads=2,
-            verbose=False,
-            logger=None
+            threads=2
         )
 
         print(f"✅ Created: {output_path}")
