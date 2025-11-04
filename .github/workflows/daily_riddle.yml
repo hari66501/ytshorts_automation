@@ -2,8 +2,8 @@ name: Daily Riddle Automation
 
 on:
   schedule:
-    - cron: "15 10 * * *"  # 3:45 PM IST
-  workflow_dispatch:
+    - cron: "15 10 * * *"  # Runs daily at 3:45 PM IST
+  workflow_dispatch:        # Allow manual trigger from GitHub
 
 jobs:
   run:
@@ -18,26 +18,30 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install full environment
+      - name: Install system dependencies (ImageMagick + FFmpeg)
         run: |
           sudo apt-get update
-          sudo apt-get install -y imagemagick ffmpeg fonts-dejavu-core
+          sudo apt-get install -y ffmpeg imagemagick fonts-dejavu-core
           sudo sed -i 's/rights="none"/rights="read|write"/g' /etc/ImageMagick-6/policy.xml
-          echo "export IMAGE_MAGICK_BINARY=$(which convert)" >> $GITHUB_ENV
-          convert --version
+          convert -version
 
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install moviepy pillow openai google-api-python-client oauth2client
+          pip install moviepy pillow openai google-api-python-client oauth2client requests
+
+      - name: Verify imports
+        run: |
+          python -c "import moviepy.editor, PIL, requests; print('✅ All imports successful!')"
 
       - name: Run daily automation
         env:
           IMAGE_MAGICK_BINARY: /usr/bin/convert
         run: |
+          echo "🎬 Running daily_riddle_generator..."
           python daily_riddle_generator.py
 
-      - name: Upload output videos
+      - name: Upload output videos as artifact
         uses: actions/upload-artifact@v4
         with:
           name: riddle-videos
