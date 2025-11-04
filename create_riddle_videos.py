@@ -1,14 +1,22 @@
 from moviepy.editor import *
 from moviepy.audio.fx import all as afx
+from datetime import datetime
+from PIL import Image
 import os
 
-input_file = "today_riddles.txt"
+# 🗓 Automatically match today's riddle file name
+today_date = datetime.now().strftime("%Y-%m-%d")
+input_file = f"today_riddles_{today_date}.txt"
 output_dir = "output"
 os.makedirs(output_dir, exist_ok=True)
 
 music_path = "music/calm_music.mp3"
 
-# Load riddles
+# 🧩 Load riddles file safely
+if not os.path.exists(input_file):
+    print(f"❌ Riddle file not found: {input_file}")
+    exit(1)
+
 with open(input_file, "r", encoding="utf-8") as f:
     lines = [line.strip() for line in f if line.strip()]
 
