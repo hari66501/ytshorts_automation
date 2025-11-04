@@ -5,6 +5,6 @@ imageio-ffmpeg==0.6.0
 Pillow==10.4.0
 requests==2.31.0
 tqdm==4.66.3
-decorator==5.1.1
+decorator==4.4.2
 numpy==1.26.4
 git+https://github.com/tokland/youtube-upload.git
