@@ -1,8 +1,14 @@
-# ✅ Pillow compatibility patch for ANTIALIAS (Pillow 10+)
+# ✅ Force Pillow compatibility for all MoviePy calls (fixes ANTIALIAS)
+import PIL
 from PIL import Image
-if not hasattr(Image, 'ANTIALIAS'):
+
+# Pillow 10+ removed ANTIALIAS; this ensures backward compatibility
+if not hasattr(Image, "Resampling"):
+    Image.Resampling = Image
+if not hasattr(Image, "ANTIALIAS"):
     Image.ANTIALIAS = Image.Resampling.LANCZOS
 
+# 🧩 Now import moviepy AFTER patch
 from moviepy.editor import *
 from moviepy.audio.fx import all as afx
 from datetime import datetime
@@ -33,9 +39,9 @@ for i, line in enumerate(lines, 1):
         # 🧩 Riddle text (first 6 seconds)
         riddle_clip = TextClip(
             riddle_text,
-            fontsize=70,
+            fontsize=60,
             color='white',
-            size=(1000, None),
+            size=(700, None),
             method='caption',
             align='center',
             font="Arial"
@@ -44,43 +50,44 @@ for i, line in enumerate(lines, 1):
         # 🪄 Answer text (fade-in + appear for 4 sec)
         answer_clip = TextClip(
             "Answer: " + answer_text,
-            fontsize=65,
+            fontsize=55,
             color='yellow',
-            size=(1000, None),
+            size=(700, None),
             method='caption',
             align='center',
             font="Arial"
         ).fadein(1).set_duration(4)
 
         # ⏳ Combine both text clips
-        txt_sequence = concatenate_videoclips([riddle_clip, answer_clip]).resize(width=1000)
+        txt_sequence = concatenate_videoclips([riddle_clip, answer_clip])
 
-        # 🎞️ Background (black)
-        background = ColorClip(size=(1080, 1920), color=(0, 0, 0), duration=10)
+        # 🎞️ Background (720x1280 for YouTube Shorts)
+        background = ColorClip(size=(720, 1280), color=(0, 0, 0), duration=txt_sequence.duration)
 
         # 💡 Combine text and background
         final = CompositeVideoClip([background, txt_sequence.set_position('center')])
 
-        # 🎧 Add background music with fade-in/out
+        # 🎧 Add background music with fade
         if os.path.exists(music_path):
             try:
                 audio = AudioFileClip(music_path).fx(afx.audio_loop, duration=final.duration)
                 audio = audio.audio_fadein(1.5).audio_fadeout(1.5)
                 final = final.set_audio(audio)
             except Exception as e:
-                print(f"⚠️ audio error: {e}")
+                print(f"⚠️ Audio error: {e}")
 
-        # 🎬 Fade out video smoothly at the end
-        final = final.crossfadeout(1.2)
+        # 🎬 Smooth fade out
+        final = final.crossfadeout(1.0)
 
-        # 📤 Export final video (✅ removed deprecated verbose/logger args)
+        # 📤 Export optimized for low-memory systems (Google VM)
         output_path = os.path.join(output_dir, f"riddle_{i}.mp4")
         final.write_videofile(
             output_path,
             fps=24,
             codec='libx264',
             audio_codec='aac',
-            threads=2
+            threads=1,
+            ffmpeg_params=["-preset", "ultrafast", "-bufsize", "512k"]
         )
 
         print(f"✅ Created: {output_path}")
