@@ -8,5 +8,5 @@ tqdm==4.66.3
 decorator==5.1.1
 numpy==1.26.4
 
-# Install youtube-upload from GitHub source
+# Install youtube-upload from GitHub
 git+https://github.com/tokland/youtube-upload.git
