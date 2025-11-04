@@ -4,6 +4,11 @@ from datetime import datetime
 from PIL import Image
 import os
 
+from PIL import Image
+if not hasattr(Image, 'ANTIALIAS'):
+    Image.ANTIALIAS = Image.Resampling.LANCZOS
+
+
 # ✅ Patch for Pillow 10+ (fixes "no attribute ANTIALIAS" error)
 if not hasattr(Image, "ANTIALIAS"):
     Image.ANTIALIAS = Image.Resampling.LANCZOS
